@@ -1,0 +1,69 @@
+{
+  "name": "wavefront",
+  "displayName": "Wavefront",
+  "version": "0.2.1",
+  "description": "Quy trinh phat trien bang AI agents: tu yeu cau tho den code tren dev. Hai command (init, add), kernel tat dinh, adapter cho tracker va storage.",
+  "author": {
+    "name": "AnhLV"
+  },
+  "license": "UNLICENSED",
+  "keywords": [
+    "delivery",
+    "orchestration",
+    "linear",
+    "taskization",
+    "spec"
+  ],
+  "userConfig": {
+    "tracker": {
+      "type": "string",
+      "title": "Tracker adapter",
+      "description": "linear | jira | github | file. Khong co connector tuong ung thi tu roi ve file.",
+      "default": "file",
+      "options": [
+        "linear",
+        "jira",
+        "github",
+        "file"
+      ]
+    },
+    "orchestrator": {
+      "type": "string",
+      "title": "Orchestrator adapter",
+      "description": "ao | subagent | manual. ao can CLI `ao` co mat.",
+      "default": "manual",
+      "options": [
+        "ao",
+        "subagent",
+        "manual"
+      ]
+    },
+    "doc_root": {
+      "type": "directory",
+      "title": "Goc tai lieu du an",
+      "description": "Thu muc chua cay tai lieu (local, hoac thu muc Drive da sync).",
+      "required": false
+    },
+    "output_language": {
+      "type": "string",
+      "title": "Ngon ngu tai lieu",
+      "description": "Theo ngon ngu tai lieu dau vao. Code, SQL, commit, PR luon tieng Anh.",
+      "default": "vi",
+      "options": [
+        "vi",
+        "en"
+      ]
+    },
+    "browser": {
+      "type": "string",
+      "title": "Cong cu browser mac dinh",
+      "description": "agent-browser | chrome-devtools | playwright. Hook PreToolUse cuong che thu bac theo gia tri nay.",
+      "default": "agent-browser",
+      "options": [
+        "agent-browser",
+        "chrome-devtools",
+        "playwright"
+      ]
+    }
+  }
+}

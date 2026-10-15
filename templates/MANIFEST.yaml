@@ -1,0 +1,29 @@
+# MANIFEST.yaml — nguồn sự thật duy nhất cho "bản nào là bản thật"
+# Một file cho mỗi dự án, đặt ở gốc cây tài liệu.
+# Đây là thứ thay cho hậu tố `-final` và các thư mục `_backup_*` đặt tại chỗ.
+
+project: <tên dự án>
+updated: <YYYY-MM-DD>
+
+docs:
+  - code: "01"
+    name: <tên ngắn không dấu>
+    path: 01_De-xuat/<ngày>/01_Ten-ngan_v1.4.docx
+    version: "1.4"
+    status: da-chot          # nhap | da-gui | da-chot | thay-the
+    sent:
+      - to: <ai>
+        at: <YYYY-MM-DD>
+        channel: <kênh>
+    sha256: "<hash>"
+    supersedes: 01_De-xuat/<ngày>/01_Ten-ngan_v1.3.docx
+
+  - code: "06"
+    name: <tên chỉ tiêu kỹ thuật>
+    path: 02_Phan-tich/06_Ten-ngan_v0.3.xlsx
+    version: "0.3"
+    status: da-chot
+    # `binds` nối tài liệu với nhóm nhãn nghiệm thu trên tracker.
+    # Nhờ nó truy vết đi được CẢ HAI chiều: từ một dòng code về điều khoản,
+    # và từ một điều khoản ra danh sách issue cùng test.
+    binds: [<chỉ tiêu>, <chỉ tiêu>]

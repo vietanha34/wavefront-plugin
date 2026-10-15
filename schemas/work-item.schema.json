@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://wavefront.local/schemas/work-item.schema.json",
+  "title": "Work-item envelope",
+  "description": "Hinh dang CHUAN cua mot don vi giao viec, do adapter tracker tra ve. Skill va orchestrator chi doc hinh dang nay, khong bao gio doc truc tiep tracker. Doi tracker (linear -> jira -> clickup -> monday) la viet mot adapter tra ve dung envelope nay, khong sua skill nao.",
+  "type": "object",
+  "required": ["id", "tier", "title", "state", "gate", "tracker"],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Ma item tren tracker that, nhu nguoi doc thay. Vi du HAL-227, PROJ-14, 901800123."
+    },
+    "url": { "type": "string", "description": "Link mo item tren tracker." },
+
+    "tier": {
+      "enum": ["epic", "phase", "task"],
+      "description": "Tang theo tu vung CUA FRAMEWORK (WHITEPAPER §1), khong theo tu vung cua tracker. `phase` = don vi giao viec chua spec; `task` = 1 PR 1 worker. Adapter dich tu tang cua no sang day bang tier_map."
+    },
+    "parent": { "type": ["string", "null"], "description": "id cua item cha, null neu la epic." },
+
+    "epic": {
+      "type": "object",
+      "description": "Epic chua item nay, lay tu registry trong config. Thieu registry thi adapter de null va orchestrator PHAI dung lai.",
+      "required": ["code"],
+      "additionalProperties": false,
+      "properties": {
+        "code": { "type": "string", "pattern": "^[A-Z]{2,5}$" },
+        "short": { "type": "string", "maxLength": 12 },
+        "base_branch": { "type": "string" }
+      }
+    },
+
+    "title": { "type": "string", "maxLength": 200 },
+    "spec_markdown": {
+      "type": ["string", "null"],
+      "description": "Spec day du cua item, dang markdown, 8 muc theo templates/task-spec.md. Day la thu duy nhat orchestrator can de chay epic-taskization. null voi tier=epic."
+    },
+
+    "state": {
+      "enum": ["backlog", "todo", "in_progress", "review", "done", "canceled"],
+      "description": "State CHUAN cua framework. Adapter dich tu state that qua tracker.state_map."
+    },
+    "gate": {
+      "enum": ["agent-ready", "needs-human", "blocked-partner", "none"],
+      "description": "`none` nghia la KHONG CO nhan cong nao -> agent PHAI bo qua item. Im lang la khong, khong phai la co."
+    },
+
+    "kind": {
+      "enum": ["P", "ADD", "FIX", "DEBT", "DEC", "OPS", "DOC", "unknown"],
+      "description": "Loai viec, suy ra tu tieu de theo NAMING §3.1. `unknown` khi tieu de khong theo quy chuan — orchestrator bao chu khong doan."
+    },
+    "type": { "type": ["string", "null"], "description": "Ban chat: feature | bug | tech-debt | decision | risk | change-request." },
+    "area": { "type": "array", "items": { "type": "string" }, "default": [] },
+    "acceptance": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "Cac chi tieu nghiem thu item nay la bang chung cho. Ten nhom nhan do config dat (tracker.label_groups.acceptance), nen gia tri o day la ten chi tieu DA BO TIEN TO. Vi du nhan `ctkt/churn` -> \"churn\". Noi sang MANIFEST.binds de truy vet ve dieu khoan."
+    },
+    "milestone": { "type": ["string", "null"], "description": "Khong bat buoc (quyet dinh 13/10/2026)." },
+    "priority": { "type": ["integer", "null"], "minimum": 0, "maximum": 4 },
+    "rework": { "type": "boolean", "default": false, "description": "Item da bi nguoi tra ve. True thi doc comment cuoi TRUOC khi lam." },
+
+    "blocked_by": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "id cac item chan. Adapter chi liet ke item CHUA xong — da xong thi loc ra, de orchestrator khong phai tu kiem."
+    },
+    "children": { "type": "array", "items": { "type": "string" }, "default": [] },
+    "last_comment": { "type": ["string", "null"], "description": "Chi can khi rework=true." },
+
+    "tracker": {
+      "type": "object",
+      "description": "Nguon va NANG LUC cua tracker. Orchestrator re nhanh theo day, khong theo ten adapter.",
+      "required": ["adapter", "auto_close_on_pr_merge"],
+      "additionalProperties": false,
+      "properties": {
+        "adapter": { "type": "string", "description": "linear | jira | github | clickup | monday | file" },
+        "auto_close_on_pr_merge": {
+          "type": "boolean",
+          "description": "true -> tracker tu dong item khi PR mang ma cua no merge. Keo theo HAI luat: PR chi mang ma item nho nhat (khong ma cha), va sau moi lan merge phai doc lai state item cha. false -> orchestrator tu dong item, va hai luat tren KHONG ap dung."
+        },
+        "native_issue_types": {
+          "type": "boolean",
+          "description": "true (Jira) -> dung issue type that, BO quy uoc nhan level/*. false (Linear) -> phan cap bang parent + nhan level/*."
+        },
+        "nesting_depth": { "type": "integer", "minimum": 1 },
+        "rules_skill": {
+          "type": ["string", "null"],
+          "description": "Ten skill chua luat rieng du an cho tracker nay, lay tu config.tracker.rules. Co thi doc truoc khi ghi bat ky thay doi nao. Khong co thi dung mac dinh cua adapter."
+        }
+      }
+    }
+  }
+}

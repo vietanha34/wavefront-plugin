@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/wf-context.sh"
+            ],
+            "timeout": 10,
+            "onFailure": "continue",
+            "statusMessage": "wavefront: doc config du an"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "mcp__chrome-devtools__.*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash",
+            "args": [
+              "${CLAUDE_PLUGIN_ROOT}/scripts/chrome-devtools-guard.sh"
+            ],
+            "timeout": 10,
+            "onFailure": "continue",
+            "statusMessage": "wavefront: browser tool order"
+          }
+        ]
+      }
+    ]
+  }
+}

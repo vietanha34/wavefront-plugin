@@ -1,0 +1,12 @@
+{
+  "name": "anhlv",
+  "description": "Marketplace noi bo — quy trinh phat trien bang he AI agents",
+  "owner": { "name": "AnhLV" },
+  "plugins": [
+    {
+      "name": "wavefront",
+      "source": "./",
+      "description": "Tu yeu cau tho den code tren branch tich hop: hai command, kernel tat dinh, adapter cho tracker / docs / orchestrator."
+    }
+  ]
+}

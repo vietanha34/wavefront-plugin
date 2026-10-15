@@ -1,0 +1,96 @@
+# .wavefront/config.yaml
+# Cau hinh mot du an. Commit vao repo. KHONG chua secret — token qua env hoac user_config.
+# `/wavefront:init` hoi roi ghi file nay. Cac phien sau doc lai, khong hoi lai.
+# Moi gia tri <...> la cho dien; xoa khoi tuy chon neu du an khong dung.
+
+version: 1
+
+project:
+  name: <Project name>
+  code: <PREFIX>            # prefix issue cua tracker
+  language: vi              # ngon ngu tai lieu. Code/SQL/commit/PR luon tieng Anh.
+
+discovery:
+  mode: contracted          # greenfield | contracted | existing-repo
+  acceptance_source: contract   # contract = TRICH tu hop dong, khong sinh moi
+  borrow:                   # thieu skill nao thi chay ban rut gon, KHONG fail
+    challenge: pm-execution:red-team-prd
+    premortem: pm-execution:pre-mortem
+    survey:    pm-ai-shipping:document-app
+    ideate:    pm-product-discovery:discover      # chi chay o greenfield
+    metrics:   pm-product-discovery:setup-metrics # chi chay o greenfield
+  borrow_seen_at: <YYYY-MM-DD>  # phien ban skill muon tai thoi diem init
+
+tracker:
+  adapter: linear           # linear | jira | github | file
+  rules: <project-rules-skill>  # skill luat rieng du an (tuy chon)
+  workspace: <workspace>
+  team: <team>
+  board: "<board / project name>"
+  state_map:                # 6 state chuan cua framework -> state that
+    backlog: Backlog
+    todo: Todo
+    in_progress: In Progress
+    review: In Review
+    done: Done
+    canceled: Canceled
+  label_groups:             # nhom nhan tuy bien; kernel khong biet ten nhom
+    acceptance: <prefix>    # nhom noi issue -> dieu khoan nghiem thu (MANIFEST.binds)
+
+storage:
+  ingest:
+    adapter: local
+    path: .wavefront/sources/
+  publish:
+    adapter: local          # local | gdrive | confluence
+    path: docs/
+    check: true             # so ban ngoai voi ban trong repo truoc khi day
+
+orchestrator:
+  adapter: ao               # ao | subagent | manual
+  project: <ao-project-id>
+  # Duong dan TUYET DOI toi gate script. Khai mot lan o day, khong hard-code trong
+  # system prompt cua AO: thu muc cai plugin doi moi lan update, va AO khong expand
+  # bien CLAUDE_PLUGIN_ROOT.
+  gate_script: </absolute/path/to/wavefront-plugin>/scripts/gate.sh
+  model_tiers:              # bang tier cua orchestration.md
+    cheap: <full-model-id>
+    default: null
+    strong: null
+
+branches:
+  main: main
+  integration: dev          # epic xong thi merge vao day
+  feature_prefix: "feature/"
+  ci_on_integration: "<CI workflow name>"   # dieu kien (c) de dong Done
+
+# Be mat code — kernel dung de quyet dinh wave va lan dung chung
+surfaces:
+  contract:                 # cham vao day => BAT BUOC sinh W0 truoc
+    - "<path/to/shared/schemas>/**"
+  shared:                   # mot task mot luc, GLOBAL ca cac epic
+    - "<path/to/shared/component>"
+
+# Lenh kiem that — rule 5, 6, 17, 18 can biet chay bang gi
+verify:
+  typecheck: "<typecheck cmd>"
+  unit: "<unit test cmd>"
+  integration: "<integration test cmd>"
+  datastore: <db>           # rule 5: query path phai co test chay that
+  cores: 8                  # rule 18: phan biet shared-state voi CPU starvation
+
+budget:
+  warn_calls: 120           # rule 19 + B5
+  block_calls: 200
+
+# same-pr: bug bao tu ngoai KHONG can test do truoc — xu ly ngay trong mot PR.
+# Bug do task `int` tim ra van giu luat cu: acceptance la test do chuyen xanh, 0 sua assertion.
+fix_policy: same-pr        # same-pr | always-split | hybrid
+
+# Registry epic — NGUON DUY NHAT cua ma. Khong khai thi khong duoc dung.
+# `code` khong bao gio doi sau khi co issue dau tien.
+epics:
+  - code: <EPIC>
+    short: <Short name>
+    issue: <PREFIX>-<n>
+    base: feature/<slug>    # tuy chon; bo neu epic khong co nhanh rieng
