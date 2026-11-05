@@ -162,7 +162,30 @@ vì relay làm garble chữ. Áp cùng luật cho mọi nguồn.
 `meta.yaml` giữ `sha256`. Tài liệu nguồn đổi ngoài tầm kiểm soát là chuyện thường —
 hash cho biết nó đã đổi, thay vì âm thầm làm việc trên bản cũ.
 
-### 4.2 `APPEND-ONLY` nghĩa là gì
+### 4.2 Design nằm cạnh spec của phase
+
+```
+.wavefront/
+├── design/
+│   └── system/                 ← design system: token, component. MỘT cái cho cả software
+│       └── design.yaml
+└── epics/<CODE>/P<n>/
+    ├── spec.md
+    └── design/                 ← canvas của PHASE này
+        ├── design.yaml         ← url artifact, version, sha256 từng file, danh sách state
+        ├── canvas.json
+        └── <Screen>.dc.html    ← một artboard một file
+```
+
+Một canvas một **phase**, không phải một epic: phase là đơn vị người duyệt, `canvas.json` là
+một file nên hai phase song song trên cùng canvas là shared surface, và task prompt phải trỏ
+đúng một file nằm trong closed file list. Màn hình dùng chung giữa các epic đi vào
+`design/system/` — cùng luật với shared surface, một chủ một chỗ.
+
+Luật đầy đủ: `adapters/design/README.md`. Bản publish cho người ngoài repo đi vào
+`03_Thiet-ke/<CODE>-P<n>/` trên kho ngoài.
+
+### 4.3 `APPEND-ONLY` nghĩa là gì
 
 `invariants.md` và `decisions.md` chỉ được **thêm dòng**. Sửa hay xoá dòng cũ là mất bằng
 chứng vì sao một quyết định từng được chọn. Quyết định đổi thì thêm dòng mới trỏ về dòng cũ:

@@ -84,7 +84,7 @@ L0  docs/ + scripts/   whitepaper · 19 rules · kernel tất định
 trong `adapters/orchestrator/ao-runbook.md`, và nó sở hữu hai substitution mà prompt worker
 để trống: `<REPORT COMMAND>` và `<FALLBACK CHANNEL>`.
 
-## Adapter — ba port
+## Adapter — bốn port
 
 `✓` đã viết và chạy thật · `◐` một phần · `○` chưa viết
 
@@ -109,6 +109,19 @@ trong `adapters/orchestrator/ao-runbook.md`, và nó sở hữu hai substitution
 | notion | ○ | connector Notion | block model, không phải file |
 
 **Spec luôn ở repo.** Kho ngoài chỉ nhận bản chốt đi ra và cấp tài liệu đối tác đi vào.
+
+### `design` — nơi vẽ
+
+| Adapter | | Cần gì | Ghi chú |
+|---|:---:|---|---|
+| claude-artifact | ✓ | Artifact tool + đăng nhập claude.ai | Claude tự vẽ. Design type lưu nội dung thành file đọc được, nên export vào repo chạy được |
+| local | ✓ | — | người tự đặt file vào thư mục design |
+| figma | ○ | connector Figma | chỉ export |
+| claude-design | ✗ | — | `claude.ai/design` độc lập đóng cửa 14/12/2026 |
+
+**Worker không đọc design từ kho gốc.** Công cụ vẽ là của harness, không có trong phiên
+worker, và token hết hạn theo giờ — nên bản đã duyệt phải `export` vào repo trước khi giao
+việc. Một canvas một **phase**; design system một cái cho cả software.
 
 ### `orchestrator` — nơi chạy worker song song
 

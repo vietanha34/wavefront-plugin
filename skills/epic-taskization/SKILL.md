@@ -30,7 +30,7 @@ Accepted forms and how to handle each:
 
 1. **Requirements file on disk** — read it, cite by section (`§5.2 says …`).
 2. **Text pasted in chat** — save it VERBATIM to a file first, point workers at the file (relay by message garbles text), and copy it verbatim into the spec's Appendix as the permanent reference.
-3. **Design source** (Claude Design / Figma / images) — pin the EXACT file/page/state names, list the easily-confused siblings (older canvases, `uploads/` copies) with a "do not read" warning, and verify access/tokens BEFORE handing any design-dependent task to a worker.
+3. **Design source** (an Artifact canvas / Figma / images) — the design must already be EXPORTED into the repo before any design-dependent task is handed out: a worker session has no Artifact tool and design tokens expire within hours, so a prompt pointing at the design's origin is a dead task. Point each task at the exported file by path (`.wavefront/epics/<CODE>/P<n>/design/<Screen>.dc.html`) and put that path in its closed file list; the per-state list the visual-verify task needs is `design.yaml` → `states`. Pin EXACT names, list the easily-confused siblings (older canvases, `uploads/` copies) with a "do not read" warning. The port and its export rule: `${CLAUDE_PLUGIN_ROOT}/adapters/design/README.md`.
 4. **Existing codebase** — review it into the spec's "Current state" section: a findings table with severities.
 5. **User decisions made in conversation** — record as Decisions ("user confirmed, do not reopen"). Unresolved points become Questions for the user; once answered, convert to Decisions and delete the question.
 6. **A work-item envelope from a tracker adapter** (the host framework's

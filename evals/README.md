@@ -25,10 +25,10 @@ case không thuộc kernel:
 
 ```bash
 claude plugin eval . --scaffold --allow-tools Bash Read \
-  --case taskization-fire --case spec-lint-chan-spec-thieu --case docs-gdrive-ingest --runs 3
+  --case taskization-fire --case spec-lint-chan-spec-thieu --case docs-gdrive-ingest --case design-export-gate --runs 3
 ```
 
-## Năm case
+## Sáu case
 
 | Case | Kiểm | Ablation có nghĩa? |
 |---|---|---|
@@ -37,6 +37,7 @@ claude plugin eval . --scaffold --allow-tools Bash Read \
 | `taskization-fire` | spec đã duyệt thì **phân rã theo quy trình**, có W0 vì spec chạm contract surface | có — đây là câu hỏi chính |
 | `browser-guard` | bốn đường của hook, nhất là khoá mở **theo phiên** | không — cần script |
 | `docs-gdrive-ingest` | **thứ tự** thao tác docs port: snapshot trước khi dùng, `verify` trước khi tin, không bao giờ hash `read_file_content` | có — luật của adapter là tri thức của plugin |
+| `design-export-gate` | design đã duyệt thì **export vào repo trước khi giao việc**, và prompt trỏ file trong repo chứ không trỏ link artifact | có — đây là luật của plugin |
 
 ## Bài học từ lần chạy đầu
 

@@ -181,7 +181,49 @@ cả transcript.
 
 ---
 
-## 5. Viết adapter mới
+## 5. Port `design` — nơi vẽ
+
+Ba chiều, không phải một "nơi chứa design":
+
+| Chiều | Việc | Luật |
+|---|---|---|
+| `create` | Claude vẽ trong kho gốc | người duyệt ở đó, cùng cổng với spec |
+| `export` | bản đã duyệt vào repo | **bắt buộc** — xem §5.1 |
+| `publish` | bản chốt ra ngoài | đi qua port `docs`, vào `03_Thiet-ke/` |
+
+### 5.1 Worker không bao giờ đọc design từ kho gốc
+
+Cùng lý do với §3.1, cộng hai lý do riêng: công cụ vẽ là của **harness** nên phiên worker do
+orchestrator spawn không chắc có nó (và token design hết hạn theo giờ), và design phải nằm
+trong **closed file list** của task mới kiểm được worker đã đọc đúng bản.
+
+### 5.2 Thao tác
+
+| Thao tác | Chiều |
+|---|---|
+| `create` | create — một canvas một đơn vị |
+| `read` | create — liệt kê và đọc artboard |
+| `export` | export — lưu vào repo + `design.yaml` (url, version, `sha256` từng file) |
+| `verify` | export — so `sha256` repo với kho gốc |
+| `publish` | publish — giao bản đã export cho port `docs` |
+
+### 5.3 Phân cấp
+
+Một **design system** cho cả software (`.wavefront/design/system/`). Một **canvas cho mỗi
+PHASE** (`.wavefront/epics/<CODE>/P<n>/design/`): phase là đơn vị người duyệt, `canvas.json`
+là một file nên hai phase song song trên một canvas là shared surface, và task prompt cần trỏ
+đúng một file. Màn hình dùng chung giữa các epic đi vào design system.
+
+| Adapter | Trạng thái |
+|---|---|
+| `claude-artifact` | **đã có** — `adapters/design/claude-artifact.md`. Artifact type `Design` lưu nội dung thành file đọc được (`project/*.dc.html`), nên `export` chạy bằng `Artifact action: read` + `path` |
+| `local` | **đã có** — người tự đặt file vào thư mục design. Đường degrade |
+| `figma` | chưa viết — chỉ `export`, Claude không vẽ trong Figma |
+| `claude-design` | **không viết** — `claude.ai/design` bản độc lập đóng cửa 14/12/2026 |
+
+---
+
+## 6. Viết adapter mới
 
 Một adapter là **một file markdown** trong `adapters/`, gồm:
 
