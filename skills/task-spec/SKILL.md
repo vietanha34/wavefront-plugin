@@ -5,7 +5,8 @@ description: Dùng khi viết spec cho một đơn vị giao việc để agent 
 
 # task-spec — spec tự đủ
 
-Template: `templates/task-spec.md`. Kiểm bằng `scripts/spec-lint.mjs`.
+Template: `${CLAUDE_PLUGIN_ROOT}/templates/task-spec.md`. Kiểm bằng `${CLAUDE_PLUGIN_ROOT}/scripts/spec-lint.mjs`
+(`Read` không expand biến — chạy qua Bash, hoặc `echo $CLAUDE_PLUGIN_ROOT` một lần rồi dùng đường dẫn tuyệt đối).
 
 ## Phép thử duy nhất
 

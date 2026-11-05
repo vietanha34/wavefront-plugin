@@ -1,6 +1,6 @@
 ---
-max_turns: 14
-timeout_seconds: 400
+max_turns: 40
+timeout_seconds: 900
 allowed_tools: ["Read", "Bash"]
 tags: ["skill-fired", "orchestrator"]
 ---

@@ -35,7 +35,7 @@ Không qua `in_progress`. Agent điều phối ghi bản báo cáo chứng minh 
 
 ### 4. Chỗ nào chưa đạt → `P2` hoặc `FIX`
 
-Spec viết theo `templates/task-spec.md` như mọi task bình thường.
+Spec viết theo `${CLAUDE_PLUGIN_ROOT}/templates/task-spec.md` như mọi task bình thường.
 
 ### 5. Chỉ sau khi 1–4 xong mới bật vòng quét bình thường
 

@@ -34,7 +34,7 @@ Accepted forms and how to handle each:
 4. **Existing codebase** — review it into the spec's "Current state" section: a findings table with severities.
 5. **User decisions made in conversation** — record as Decisions ("user confirmed, do not reopen"). Unresolved points become Questions for the user; once answered, convert to Decisions and delete the question.
 6. **A work-item envelope from a tracker adapter** (the host framework's
-   `schemas/work-item.schema.json`) — the normal input when this skill runs under an
+   `${CLAUDE_PLUGIN_ROOT}/schemas/work-item.schema.json`) — the normal input when this skill runs under an
    orchestrator. Read `spec_markdown` as the requirements document and `epic.code` /
    `epic.base_branch` as the branch topology; they are already settled, so do not re-ask.
    Two fields change behaviour and must be honoured:
@@ -76,9 +76,65 @@ B5  Split each wave into TASKs → each with a closed file list, measurable acce
       I18N-P1 the 9 tasks over 200 calls were 64 % of worker cost. Split by area/screen
       group, not by layer. Don't split below ~50 calls — each extra task pays a ~52k
       prefix, a re-read of prompt + spec, one more gate and one more review.
-B6  Assess parallel vs sequential with the matrix below → draw the run diagram + merge order.
-B7  Emit the spec document (structure in references/lessons.md §Spec) → USER APPROVES → only then create tasks.
+B6  Assess parallel vs sequential with the matrix below, then run `wave-plan.mjs`
+      (Kernel scripts) on the closed file lists → draw the run diagram + merge order.
+B7  Emit the spec document (structure in ${CLAUDE_PLUGIN_ROOT}/skills/epic-taskization/references/lessons.md §Spec) → USER APPROVES → only then create tasks.
 ```
+
+**Final message of a planning run:** the last message you send MUST carry the wave table
+itself, not a pointer to a file — one row per task: wave (`W0` / `W1..n` / last wave) ·
+task ID in the mandatory format · role · its closed file list · model tier when the harness
+picks one — followed by the merge order. Reviewers and any automated check read the LAST
+message only; a plan that exists only inside files reads as no plan at all.
+
+## Kernel scripts (deterministic — run these, never re-derive by judgement)
+
+`${CLAUDE_PLUGIN_ROOT}` is the plugin root. The **Read tool does not expand variables**:
+either resolve it once (`echo $CLAUDE_PLUGIN_ROOT`) and Read absolute paths, or run the
+scripts through Bash, which does expand it. No install step — each script is self-contained.
+
+**wave-plan** — wave assignment from closed file lists (B4/B6). Run from the REPO ROOT:
+surface globs are checked against real files.
+
+```bash
+node ${CLAUDE_PLUGIN_ROOT}/scripts/wave-plan.mjs tasks.json [--json]
+```
+
+`tasks.json` = `{ "contract_surface": [glob], "shared_surface": [glob], "tasks": [{ "id", "role", "closed_files": [path] }] }`.
+Take both surface lists from `.wavefront/config.yaml` → `surfaces.contract` / `surfaces.shared`.
+Exit 0 = planned. Exit 1 = a task has no `closed_files`, or a surface glob matches no file
+in the repo (stale config — fix the config, do not drop the surface).
+
+**spec-lint** — the gate a task spec must pass before the item may move to `Todo`.
+
+```bash
+node ${CLAUDE_PLUGIN_ROOT}/scripts/spec-lint.mjs <file.md> [<file.md> …] [--json]
+```
+
+Reads stdin when given no file. Exit 1 = at least one ERROR; the item stays where it is.
+
+**name-check** — issue titles and labels against `${CLAUDE_PLUGIN_ROOT}/docs/NAMING.md`,
+with the epic registry read from config.
+
+```bash
+node ${CLAUDE_PLUGIN_ROOT}/scripts/name-check.mjs --issues <issues.json> --config .wavefront/config.yaml [--json]
+```
+
+`issues.json` = what a tracker adapter returns: an array of `{ id, title, labels[], parentId, projectMilestone }`.
+Exit 1 = ERROR; WARN does not fail.
+
+**gate.sh** — the per-PR wave gate. ORCHESTRATOR ONLY, from a clean review worktree; needs
+`gh` and the PR on GitHub.
+
+```bash
+bash "<orchestrator.gate_script>" <pr> <allowed-files.txt> [-- "<check cmd>" …]
+```
+
+The path comes from `orchestrator.gate_script`; left empty it is the copy shipped with the
+plugin, and the `[wavefront] Gate: chay …` line printed at session start already holds the
+resolved absolute path. `allowed-files.txt` = the task's closed file list, one exact path
+per line. Exit 0 only when the scope is clean AND every check passes; full logs stay in
+`/tmp/gate-<pr>/`.
 
 ## Parallelism matrix (B6)
 
@@ -94,7 +150,7 @@ B7  Emit the spec document (structure in references/lessons.md §Spec) → USER 
 
 ## Task prompts
 
-Every task prompt = COMMON PREAMBLE + task-specific part. Templates (including the mandatory Superpowers TDD chain, the contract-task, integration-test-task and visual-verify-task variants) are in [references/templates.md](references/templates.md) — read it before writing any prompt.
+Every task prompt = COMMON PREAMBLE + task-specific part. Templates (including the mandatory Superpowers TDD chain, the contract-task, integration-test-task and visual-verify-task variants) are in [references/templates.md](${CLAUDE_PLUGIN_ROOT}/skills/epic-taskization/references/templates.md) — read it before writing any prompt.
 
 Hard rules baked into every prompt:
 - TDD via Superpowers skills (`superpowers:test-driven-development` etc.) — the exact chain is in templates.md.
@@ -115,7 +171,7 @@ This skill is **harness-neutral**: nothing below the plan documents assumes a pa
 orchestrator. Execution needs an **orchestrator adapter**, which is not part of this skill.
 
 1. Read `orchestrator.adapter` from the host config (`.wavefront/config.yaml`).
-2. Read that adapter under the framework's `adapters/orchestrator/` — it owns spawning,
+2. Read that adapter under `${CLAUDE_PLUGIN_ROOT}/adapters/orchestrator/` — it owns spawning,
    message routing by task ID, the multi-epic registry, stall detection and revival, the
    review/merge flow, and the substitutions `templates.md` leaves as placeholders
    (`<REPORT COMMAND>`, `<FALLBACK CHANNEL>`, `<SESSION ID>`, `<BROWSER PANEL>`).
@@ -129,4 +185,4 @@ loses every gate this skill exists to enforce.
 A prompt must never reach a worker with a placeholder still unsubstituted; that is a dead
 task.
 
-Battle-tested rules that keep quality up are in [references/lessons.md](references/lessons.md) — read it when writing specs, prompts, or reviewing.
+Battle-tested rules that keep quality up are in [references/lessons.md](${CLAUDE_PLUGIN_ROOT}/skills/epic-taskization/references/lessons.md) — read it when writing specs, prompts, or reviewing.

@@ -7,7 +7,7 @@ inline by the orchestrator).
 
 Every prompt = COMMON PREAMBLE + one task-specific variant. Write prompts in the language of the input requirements; keep code/commands/paths/identifiers English.
 
-**Harness placeholders.** This file is harness-neutral. `<REPORT COMMAND>`, `<FALLBACK CHANNEL>`, `<SESSION ID>` and `<BROWSER PANEL>` are substituted by the orchestrator from its harness adapter (for AO, see the framework's adapters/orchestrator/ao-runbook.md). A prompt must never be sent to a worker with a placeholder still in it — that is a dead task.
+**Harness placeholders.** This file is harness-neutral. `<REPORT COMMAND>`, `<FALLBACK CHANNEL>`, `<SESSION ID>` and `<BROWSER PANEL>` are substituted by the orchestrator from its harness adapter (for AO, see `${CLAUDE_PLUGIN_ROOT}/adapters/orchestrator/ao-runbook.md`). A prompt must never be sent to a worker with a placeholder still in it — that is a dead task.
 
 When the harness has a message size limit, split a long prompt into numbered parts; and when it can garble text mid-flight, tell workers to quote the garbled passage back instead of guessing. Both are declared as capability flags by the orchestrator adapter.
 

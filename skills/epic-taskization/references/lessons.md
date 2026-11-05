@@ -121,7 +121,7 @@ Distilled from a 3-phase, 50-PR project. Read when writing specs, prompts, or re
 ## Gate checklists
 
 **Pre-spawn check (orchestrator, before EVERY parallel spawn — including ad-hoc tasks the
-user pulls mid-day, not only planned waves):** (1) run the wave planner (`scripts/wave-plan.mjs`)
+user pulls mid-day, not only planned waves):** (1) run the wave planner (`${CLAUDE_PLUGIN_ROOT}/scripts/wave-plan.mjs`)
 on the tasks' closed file lists plus the project's contract/shared surfaces, from inside the
 repo — file overlap or a shared-surface hit means serialize; (2) check BEHAVIOURAL overlap the
 file lists cannot show: a shared callee/builder either task changes, or the same acceptance
