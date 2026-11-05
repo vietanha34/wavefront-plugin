@@ -80,11 +80,15 @@ Hash **chỉ** lấy từ `download_file_content`, và `exportMimeType` phải k
 vào `meta.yaml` — bỏ trống thì connector tự chọn, và lần `verify` sau chọn khác là hash khác
 mà nội dung không đổi.
 
+Chiều ngược lại cũng vậy: `text/html` (artboard `.dc.html` của port `design`), `text/plain`
+và `text/markdown` đẩy lên **không** kèm `disableConversionToGoogleType: true` thì Drive biến
+chúng thành Google Doc, và file vừa đẩy không còn là file vừa hash.
+
 | Loại file | `exportMimeType` | Tính chất |
 |---|---|---|
 | Google Doc | `text/markdown` | **byte-stable**: hai lần gọi liên tiếp ra bytes trùng khớp |
 | Google Sheet | `text/csv` | **chưa kiểm chứng** — probe chỉ chạy trên Doc. Kiểm tính byte-stable trước khi tin |
-| `.md` / `.txt` đẩy lên với `disableConversionToGoogleType: true` | bỏ trống | tải về **byte-exact** với bản đẩy lên (`fileSize` khớp độ dài) |
+| `.md` / `.txt` / `.html` đẩy lên với `disableConversionToGoogleType: true` | bỏ trống | tải về **byte-exact** với bản đẩy lên (`fileSize` khớp độ dài) |
 | `.docx` / `.xlsx` / `.pdf` upload | bỏ trống | hash bytes; `md5Checksum` không có để đối chiếu |
 
 **Export không bằng nguồn.** Google Doc export `text/markdown` thêm escape và khoảng trắng

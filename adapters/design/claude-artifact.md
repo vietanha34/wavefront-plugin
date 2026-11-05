@@ -85,7 +85,7 @@ thành DECISION.
 | `read` | `action: "list", scope: "files", url: <url>` → `action: "read", url: <url>, paths: ["project/canvas.json", "project/<Screen>.dc.html", …]` |
 | `export` | cùng `read`, thêm `out_dir` = thư mục design trong repo, rồi ghi `design.yaml` |
 | `verify` | đọc lại đúng danh sách `paths` trong `design.yaml`, tính lại `sha256`, so |
-| `publish` | giao thư mục đã export cho adapter của `storage.publish` → `03_Thiet-ke/<CODE>-P<n>/` |
+| `publish` | **không gọi tool nào của mình** — giao thư mục đã export cho adapter đang khai ở `storage.publish` (xem dưới) |
 
 ### `create` — hướng dẫn cho Claude, theo thứ tự
 
@@ -135,6 +135,33 @@ states:                                  # những state phải kiểm ở task 
 (`epic-taskization/references/templates.md §visual-verify-task`). Không khai thì task `vis`
 tự đoán, và nó sẽ đoán ít hơn thực tế.
 
+## `publish` đi theo adapter của storage, không có adapter riêng
+
+Port `design` có đúng **một** chiều ra, và chiều đó là port `docs`. `design.publish.via:
+storage.publish` nghĩa là: adapter nào đang khai ở `storage.publish` thì bản chốt đi vào đó.
+Không khai adapter lần thứ hai trong khối `design`.
+
+| `storage.publish.adapter` | Bản chốt hạ cánh ở |
+|---|---|
+| `local` | `<storage.publish.path>/03_Thiet-ke/<CODE>-P<n>/` trên đĩa |
+| `gdrive` | thư mục `03_Thiet-ke/<CODE>-P<n>` dưới `folder_id` của dự án trên Drive |
+| chưa khai | **không publish** — nói rõ với người, đừng tự chọn `local` |
+
+Hai thứ phải đúng khi adapter là `gdrive`:
+
+* **`disableConversionToGoogleType: true` cho `.dc.html`.** Thiếu cờ này thì `text/html` bị
+  Drive biến thành Google Doc, và artboard thành một trang văn bản vô dụng.
+* **Thư mục `03_Thiet-ke/<CODE>-P<n>` phải tồn tại trước.** `search_files` không đệ quy, nên
+  đi từng tầng: `03_Thiet-ke` → `<CODE>-P<n>`, thiếu tầng nào thì `create_file` folder tầng đó.
+
+Hai luật của port `docs` áp nguyên, không có ngoại lệ cho design: bản bị thay thế **chuyển**
+sang `99_Luu-tru/<ngày>/` chứ không ghi đè, và `check` là `storage.publish.check` — khối
+`design` không có cờ `check` riêng.
+
+Export vào repo thì **không** đi qua adapter nào: nó luôn là file trong worktree
+(`design.canvas.path`), vì đó là thứ worker đọc. `design.adapter` là nơi **vẽ**;
+`storage.publish.adapter` là nơi **đẩy ra**. Hai khái niệm, hai khoá, đừng đọc chung.
+
 ## Hash
 
 Hash **file đã export** (`project/*.dc.html`, `canvas.json`), không bao giờ hash bản render
@@ -174,6 +201,6 @@ design:
     unit: phase               # phase | epic — đổi sang epic phải ghi DECISION
     path: .wavefront/epics/<CODE>/P<n>/design/
   publish:
-    folder: 03_Thiet-ke/      # đi qua adapter của storage.publish
-    check: true
+    via: storage.publish      # local -> ghi đĩa; gdrive -> đẩy lên Drive. Không khai adapter ở đây
+    folder: 03_Thiet-ke/
 ```

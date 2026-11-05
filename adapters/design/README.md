@@ -21,7 +21,7 @@ Nên port này có ba chiều:
 |---|---|---|
 | `create` | Claude vẽ | trong kho gốc (Artifact), người duyệt ở đó |
 | `export` | bản đã duyệt vào repo | **bắt buộc**, không phải tuỳ chọn. Có `sha256` để `verify` |
-| `publish` | bản chốt ra ngoài cho người không vào repo | đi qua port `docs`, vào `03_Thiet-ke/` |
+| `publish` | bản chốt ra ngoài cho người không vào repo | **uỷ quyền** cho adapter đang khai ở `storage.publish`: `local` ghi đĩa, `gdrive` đẩy lên Drive. Vào `03_Thiet-ke/<CODE>-P<n>/` |
 
 ## Bảng hỗ trợ
 
@@ -42,11 +42,22 @@ Nên port này có ba chiều:
 | `read` | create | liệt kê và đọc artboard hiện có |
 | `export` | export | lưu vào repo + `design.yaml` (url, version, `sha256` từng file) |
 | `verify` | export | so `sha256` bản repo với bản trong kho gốc → biết design đã đổi sau khi duyệt |
-| `publish` | publish | giao bản đã export cho port `docs` |
+| `publish` | publish | giao bản đã export cho port `docs`, không gọi tool của riêng mình |
 
 `verify` là thao tác đáng giá nhất và dễ bỏ nhất: người sửa canvas sau khi spec đã duyệt là
 chuyện thường, và không hash thì worker âm thầm build theo bản cũ. Adapter không hash được
 thì phải khai rõ ở phần "không làm được gì".
+
+## Ba khoá, đừng đọc chung
+
+| Khoá | Trả lời câu | Ai dùng |
+|---|---|---|
+| `design.adapter` | **vẽ** ở đâu | Claude khi tạo/đọc canvas |
+| `design.canvas.path` | bản worker đọc nằm đâu | luôn là repo, không có adapter |
+| `storage.publish.adapter` | bản chốt **đẩy ra** đâu | port `docs` làm, port `design` chỉ giao hàng |
+
+Nên một dự án vẽ bằng `claude-artifact` mà `storage.publish.adapter: gdrive` thì design chốt
+lên Drive; đổi sang `local` thì nó xuống đĩa. Không sửa gì trong khối `design`.
 
 ## Viết một adapter mới
 

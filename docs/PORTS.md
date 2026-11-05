@@ -189,7 +189,7 @@ Ba chiều, không phải một "nơi chứa design":
 |---|---|---|
 | `create` | Claude vẽ trong kho gốc | người duyệt ở đó, cùng cổng với spec |
 | `export` | bản đã duyệt vào repo | **bắt buộc** — xem §5.1 |
-| `publish` | bản chốt ra ngoài | đi qua port `docs`, vào `03_Thiet-ke/` |
+| `publish` | bản chốt ra ngoài | **uỷ quyền** cho adapter ở `storage.publish` (`design.publish.via`): `local` ghi đĩa, `gdrive` đẩy lên Drive. Khối `design` không khai adapter lần hai |
 
 ### 5.1 Worker không bao giờ đọc design từ kho gốc
 

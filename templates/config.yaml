@@ -79,8 +79,9 @@ design:
     unit: phase               # phase | epic. Doi sang epic phai ghi DECISION
     path: .wavefront/epics/<CODE>/P<n>/design/
   publish:
-    folder: 03_Thiet-ke/      # di qua adapter cua storage.publish
-    check: true
+    via: storage.publish      # KHONG khai adapter o day. `local` -> ghi dia,
+                              # `gdrive` -> day len Drive. Mot cho chon, mot cho doi.
+    folder: 03_Thiet-ke/      # thu muc con trong cay tai lieu (DOC-TREE §1)
 
 # Be mat code — kernel dung de quyet dinh wave va lan dung chung
 surfaces:
