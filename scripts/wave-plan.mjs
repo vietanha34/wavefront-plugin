@@ -36,7 +36,28 @@ const argv = process.argv.slice(2);
 const asJson = argv.includes("--json");
 const file = argv.find((a) => !a.startsWith("--"));
 
-const raw = file ? readFileSync(file, "utf8") : readFileSync(0, "utf8");
+const USAGE = `wave-plan — chia task thanh wave tu closed file list.
+
+Dung:
+  node wave-plan.mjs tasks.json [--json]
+  cat tasks.json | node wave-plan.mjs [--json]
+
+tasks.json: { contract_surface: [glob], shared_surface: [glob],
+              tasks: [{ id, role, closed_files: [path] }] }`;
+
+function readStdin() {
+  try {
+    return readFileSync(0, "utf8");
+  } catch {
+    return "";
+  }
+}
+
+const raw = file ? readFileSync(file, "utf8") : readStdin();
+if (!raw.trim()) {
+  console.error(USAGE);
+  process.exit(1);
+}
 const input = JSON.parse(raw);
 const tasks = input.tasks ?? [];
 if (!tasks.length) { console.error("Khong co task nao."); process.exit(1); }

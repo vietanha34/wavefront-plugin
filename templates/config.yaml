@@ -49,10 +49,11 @@ storage:
 orchestrator:
   adapter: ao               # ao | subagent | manual
   project: <ao-project-id>
-  # Duong dan TUYET DOI toi gate script. Khai mot lan o day, khong hard-code trong
-  # system prompt cua AO: thu muc cai plugin doi moi lan update, va AO khong expand
-  # bien CLAUDE_PLUGIN_ROOT.
-  gate_script: </absolute/path/to/wavefront-plugin>/scripts/gate.sh
+  # Gate script. BO TRONG = dung ban di kem plugin (scripts/gate.sh), duong dan do
+  # wf-context.sh resolve moi phien — khong gay khi plugin update len version moi.
+  # Chi khai duong dan TUYET DOI khi du an co gate rieng: AO khong expand bien
+  # CLAUDE_PLUGIN_ROOT, nen gia tri o day phai chay duoc nhu-la.
+  gate_script:
   model_tiers:              # bang tier cua orchestration.md
     cheap: <full-model-id>
     default: null

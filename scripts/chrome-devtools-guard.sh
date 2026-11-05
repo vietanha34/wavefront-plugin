@@ -18,6 +18,13 @@ UNLOCK_DIR="${TMPDIR:-/tmp}/wavefront-unlock"
 
 payload=$(cat)
 
+# Guard chi co hieu luc trong repo DUNG wavefront. Repo khac: im lang, exit 0.
+# Plugin cai o scope user nen hook nay chay o moi project; khong co pham vi thi no
+# se chan browser tool cua nhung project chang lien quan gi den wavefront.
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$HERE/wf-find-config.sh" 2>/dev/null || exit 0
+wf_find_config >/dev/null 2>&1 || exit 0
+
 # jq la phu thuoc cung. Thieu thi noi ro mot lan roi cho qua, thay vi that bai am tham.
 if ! command -v jq >/dev/null 2>&1; then
   printf 'wavefront: thieu `jq` nen khong kiem duoc thu bac cong cu browser — cho qua.\n' >&2

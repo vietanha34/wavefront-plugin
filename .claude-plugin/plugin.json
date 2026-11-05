@@ -1,12 +1,12 @@
 {
   "name": "wavefront",
   "displayName": "Wavefront",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Quy trinh phat trien bang AI agents: tu yeu cau tho den code tren dev. Hai command (init, add), kernel tat dinh, adapter cho tracker va storage.",
   "author": {
     "name": "AnhLV"
   },
-  "license": "UNLICENSED",
+  "license": "MIT",
   "keywords": [
     "delivery",
     "orchestration",

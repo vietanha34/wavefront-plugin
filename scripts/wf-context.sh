@@ -15,21 +15,11 @@ die_quiet() { exit 0; }
 trap die_quiet ERR
 
 # 1. Tim config: tu CLAUDE_PROJECT_DIR, roi nguoc len tu cwd (toi da 6 tang)
-find_cfg() {
-  local d
-  for d in "${CLAUDE_PROJECT_DIR:-}" "$PWD"; do
-    [ -n "$d" ] || continue
-    local p="$d"
-    local i=0
-    while [ "$i" -lt 6 ] && [ -n "$p" ] && [ "$p" != "/" ]; do
-      if [ -f "$p/.wavefront/config.yaml" ]; then printf '%s\n' "$p/.wavefront/config.yaml"; return 0; fi
-      p="$(dirname "$p")"; i=$((i+1))
-    done
-  done
-  return 1
-}
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+. "$HERE/wf-find-config.sh"
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(dirname "$HERE")}"
 
-CFG="$(find_cfg)" || exit 0
+CFG="$(wf_find_config)" || exit 0
 [ -r "$CFG" ] || exit 0
 
 # 2. Doc vai truong. Parse toi thieu, khong phu thuoc thu vien yaml.
@@ -43,6 +33,9 @@ CODE="$(get code)"
 TRACKER="$(get adapter)"      # adapter dau tien trong file la cua tracker
 ORCH="$(sed -n '/^orchestrator:/,/^[^[:space:]]/p' "$CFG" | sed -n 's/^[[:space:]]*adapter:[[:space:]]*\(.*\)$/\1/p' | head -1 | strip)"
 GATE="$(get gate_script)"
+# Bo trong (hoac con placeholder cua template) -> dung ban di kem plugin. In duong dan
+# da resolve: AO khong expand CLAUDE_PLUGIN_ROOT, nen gia tri in ra phai chay duoc nhu-la.
+case "$GATE" in ""|null|"<"*) GATE="$PLUGIN_ROOT/scripts/gate.sh" ;; esac
 INTEG="$(get integration)"
 FIXP="$(get fix_policy)"
 LANG="$(get language)"
@@ -60,7 +53,7 @@ LUAT BAT BUOC trong repo nay:
 - Tao issue/spec moi -> \`/wavefront:add\`. KHONG tu chuyen item sang trang thai "todo":
   do la cong cua NGUOI va la cong duy nhat.
 - Quyen chuyen trang thai, dat ten, nhan: docs/NAMING.md + adapters/tracker-${TRACKER:-file}.md
-- Gate: chay \`${GATE:-<chua khai orchestrator.gate_script>}\`, khong chay test truc tiep
+- Gate: chay \`${GATE}\`, khong chay test truc tiep
   trong phien dieu phoi. Sau khi merge het wave: chay \`${INTEG:-<chua khai verify.integration>}\`
   TREN BASE.
 - Sua loi: fix_policy = ${FIXP:-same-pr}. Bug do task \`int\` tim ra thi acceptance la

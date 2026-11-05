@@ -36,6 +36,10 @@ Lấy từ config: `project.code` · `tracker.*` · `orchestrator.gate_script` �
 `branches.*` · `budget.*` · `fix_policy`. Chỗ nào config trống thì **để nguyên dấu
 `<CHƯA KHAI>`** trong văn bản, đừng đoán — để người thấy mà điền.
 
+Ngoại lệ duy nhất: `orchestrator.gate_script` trống thì điền đường dẫn **tuyệt đối đã
+resolve** của `${CLAUDE_PLUGIN_ROOT}/scripts/gate.sh` (dòng `[wavefront] Gate: chay …`
+ở SessionStart in đúng đường dẫn đó). AO không expand biến môi trường.
+
 Khuôn:
 
 ```

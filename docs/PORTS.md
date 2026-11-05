@@ -123,7 +123,7 @@ capabilities:
 
 | Adapter | Trạng thái |
 |---|---|
-| `ao` | **đã có** — cần CLI `ao` trả lời được. Không có thì nói rõ và **dừng sau khi ra plan**, không bịa harness khác. Gate script đi kèm plugin ở `scripts/gate.sh`; đường dẫn tuyệt đối khai ở `orchestrator.gate_script`. Gate script cần repo trên GitHub và CLI `gh` (đọc head/base PR, fetch `pull/<n>/head`) |
+| `ao` | **đã có** — cần CLI `ao` trả lời được. Không có thì nói rõ và **dừng sau khi ra plan**, không bịa harness khác. Gate script đi kèm plugin ở `scripts/gate.sh`; để trống `orchestrator.gate_script` thì dùng bản này, chỉ khai đường dẫn tuyệt đối khi dự án có gate riêng. Gate script cần repo trên GitHub và CLI `gh` (đọc head/base PR, fetch `pull/<n>/head`) |
 | `subagent` | chưa viết — chạy trong một phiên, mất cách ly worktree |
 | `manual` | **đã có** — xuất prompt ra file, người tự chạy |
 
