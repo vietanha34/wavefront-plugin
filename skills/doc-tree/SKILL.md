@@ -11,6 +11,9 @@ Kho ngoài nào thì đọc adapter của nó trước khi gọi tool: `${CLAUDE
 (`storage.ingest.adapter` / `storage.publish.adapter` trong `.wavefront/config.yaml`). Mỗi kho
 sai một kiểu — Drive chẳng hạn không ghi đè được nội dung và hash phải lấy từ bản export.
 
+`Read` không expand biến: chạy qua Bash, hoặc `echo $CLAUDE_PLUGIN_ROOT` một lần rồi dùng
+đường dẫn tuyệt đối.
+
 ## Ba việc
 
 ### 1. `ingest` — tài liệu từ ngoài vào

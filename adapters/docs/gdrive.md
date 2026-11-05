@@ -48,7 +48,8 @@ giữa đường đều còn đọc được:
 1. `create_file` bản **version mới** (`parentId` = thư mục đích, `textContent` hoặc
    `base64Content`, `contentMimeType`, `disableConversionToGoogleType: true`)
 2. `update_file(fileId: <bản cũ>, parentId: <id của 99_Luu-tru/<ngày>>, etag: <etag đã đọc>)`
-   — **chuyển** bản bị thay thế, không ghi đè, không trash (DOC-TREE §2.2)
+   — **chuyển** bản bị thay thế, không ghi đè, không trash (DOC-TREE §2.2). Thư mục ngày
+   chưa có thì `create_file` nó trước (`application/vnd.google-apps.folder`)
 3. cập nhật `MANIFEST.yaml` trên Drive: `path`, `version`, `status`, `sha256`, `supersedes`
 4. sync `MANIFEST.yaml` về `.wavefront/MANIFEST.yaml` — bản trong repo là **chỉ đọc**, Drive
    là nguồn (DOC-TREE §4)
@@ -56,6 +57,19 @@ giữa đường đều còn đọc được:
 Ghi đè nội dung một file cũ là việc **không làm được**: `update_file` chỉ nhận metadata
 (`title`, `parentId`, `starred`, `readOnly`, `etag`, …). Điều này khớp với luật đặt tên có
 version — một bản mới là một file mới, không phải một revision.
+
+### `MANIFEST.yaml` là ngoại lệ, và nó xấu
+
+`MANIFEST.yaml` nằm ở một đường dẫn cố định, **không** có version trong tên (DOC-TREE §3),
+nên nó không đi được đường "file mới + chuyển bản cũ": không có gì để lưu trữ, và tên phải
+giữ nguyên. Mà connector vẫn không có đường ghi nội dung.
+
+Cách duy nhất: `create_file` một `MANIFEST.yaml` mới (cùng `title`, cùng `parentId`,
+`disableConversionToGoogleType: true`) → `trash_file` bản cũ. Drive cho hai file trùng tên
+trong một thư mục, nên **có một cửa sổ** hai `MANIFEST.yaml` cùng tồn tại: người đọc trong
+cửa sổ đó phải lấy bản `createdTime` mới nhất. Vì vậy MANIFEST là lệnh ghi **cuối cùng** của
+`put`, và nếu `put` dừng giữa đường thì MANIFEST còn trỏ về bản cũ — trạng thái cũ nhưng
+nhất quán, không phải trạng thái lai.
 
 ## Hash — chỗ duy nhất dễ làm sai
 
@@ -69,7 +83,7 @@ mà nội dung không đổi.
 | Loại file | `exportMimeType` | Tính chất |
 |---|---|---|
 | Google Doc | `text/markdown` | **byte-stable**: hai lần gọi liên tiếp ra bytes trùng khớp |
-| Google Sheet | `text/csv` | một sheet một lần gọi |
+| Google Sheet | `text/csv` | **chưa kiểm chứng** — probe chỉ chạy trên Doc. Kiểm tính byte-stable trước khi tin |
 | `.md` / `.txt` đẩy lên với `disableConversionToGoogleType: true` | bỏ trống | tải về **byte-exact** với bản đẩy lên (`fileSize` khớp độ dài) |
 | `.docx` / `.xlsx` / `.pdf` upload | bỏ trống | hash bytes; `md5Checksum` không có để đối chiếu |
 
