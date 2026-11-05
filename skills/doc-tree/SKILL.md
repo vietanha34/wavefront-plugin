@@ -5,7 +5,11 @@ description: Dùng khi tổ chức tài liệu dự án, đặt tên file tài l
 
 # doc-tree — tổ chức tài liệu
 
-Luật đầy đủ: `docs/DOC-TREE.md`. Skill này là phần thao tác.
+Luật đầy đủ: `${CLAUDE_PLUGIN_ROOT}/docs/DOC-TREE.md`. Skill này là phần thao tác.
+
+Kho ngoài nào thì đọc adapter của nó trước khi gọi tool: `${CLAUDE_PLUGIN_ROOT}/adapters/docs/<adapter>.md`
+(`storage.ingest.adapter` / `storage.publish.adapter` trong `.wavefront/config.yaml`). Mỗi kho
+sai một kiểu — Drive chẳng hạn không ghi đè được nội dung và hash phải lấy từ bản export.
 
 ## Ba việc
 

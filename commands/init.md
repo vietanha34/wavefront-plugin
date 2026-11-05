@@ -17,7 +17,9 @@ Dùng AskUserQuestion nếu có, hỏi gọn trong một lần:
 1. **Chế độ** — `greenfield` (sản phẩm mới) · `contracted` (phạm vi đã khoá bằng hợp đồng) ·
    `existing-repo` (repo đang chạy dở)
 2. **Tracker** — adapter nào, workspace/team/board, prefix issue
-3. **Storage** — tài liệu đi vào từ đâu, bản chốt đi ra đâu
+3. **Storage** — tài liệu đi vào từ đâu, bản chốt đi ra đâu. Chọn `gdrive` thì hỏi thêm
+   `folder_id` của thư mục gốc dự án trên Drive (và `drive_id` nếu là Shared Drive) —
+   `search_files` không đệ quy nên tìm theo tên mỗi lần là tốn vô ích
 4. **Branch topology** — main, branch tích hợp (thường `dev`, không phải main), tiền tố
    feature branch. Hỏi rõ, đừng suy ra. Ghi thành DECISION.
 5. **Lệnh kiểm** — typecheck, unit, integration; datastore thật nếu có

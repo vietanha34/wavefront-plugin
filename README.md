@@ -104,7 +104,7 @@ trong `adapters/orchestrator/ao-runbook.md`, và nó sở hữu hai substitution
 | Adapter | | Cần gì | Ghi chú |
 |---|:---:|---|---|
 | local | ✓ | — | thư mục trên đĩa, hoặc thư mục Drive đã sync |
-| gdrive | ○ | connector Drive | export về định dạng mở **trước khi** hash |
+| gdrive | ✓ | connector Drive | hash bản export; không ghi đè được nội dung, bản mới là file mới |
 | confluence | ○ | connector Atlassian | ánh xạ version của trang sang `MANIFEST.version` |
 | notion | ○ | connector Notion | block model, không phải file |
 
@@ -178,7 +178,7 @@ có spec tự đủ" — chỗ mà trước đây không skill nào sở hữu.
 `clarify`, whitepaper, naming, doc-tree, ports, rules, audit Linear.
 
 Chưa có: `gate`/`status` còn ở mức khung, skill `task-spec`/`reconcile`/`doc-tree` còn mỏng,
-adapter Jira/ClickUp/gdrive/confluence cố ý **chưa viết** (xem `PORTS.md §1.3`), eval suite
+adapter Jira/ClickUp/confluence cố ý **chưa viết** (xem `PORTS.md §1.3`), eval suite
 mới phủ phần tất định (xem `evals/README.md`).
 
 Hệ quả đáng nhớ khi dùng: milestone không bắt buộc, nên báo cáo theo mốc chỉ phủ các

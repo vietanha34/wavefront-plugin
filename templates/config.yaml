@@ -39,12 +39,16 @@ tracker:
 
 storage:
   ingest:
-    adapter: local
-    path: .wavefront/sources/
+    adapter: local          # local | gdrive
+    path: .wavefront/sources/   # snapshot luon ha canh trong repo, moi adapter
+    # gdrive can them: folder_id, drive_id (neu Shared Drive), export_map
+    # (adapters/docs/gdrive.md §Cau hinh). Khong khai export_map thi connector tu
+    # chon dinh dang export va `verify` bao doi du noi dung khong doi.
   publish:
     adapter: local          # local | gdrive | confluence
-    path: docs/
+    path: docs/             # local: duong dan. gdrive: dung folder_id thay cho path
     check: true             # so ban ngoai voi ban trong repo truoc khi day
+    convert: false          # gdrive: true = bien .md thanh Google Doc; `diff` mat kha nang so voi repo
 
 orchestrator:
   adapter: ao               # ao | subagent | manual

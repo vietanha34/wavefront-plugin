@@ -26,7 +26,7 @@ Kho ngoài **không bao giờ** là nơi agent đọc spec vào.
 | Adapter | Trạng thái | ingest | publish | Cần gì | Ghi chú |
 |---|:---:|:---:|:---:|---|---|
 | **local** | ✓ | ✓ | ✓ | — | mặc định. Thư mục trên đĩa, hoặc thư mục Drive đã sync |
-| **gdrive** | ○ | ✓ | ✓ | connector Google Drive | export về định dạng mở trước khi hash, nếu không `sha256` đổi mỗi lần Google re-render |
+| **gdrive** | ✓ | ✓ | ✓ | connector Google Drive first-party | [`gdrive.md`](gdrive.md). Hash bản export (`download_file_content`), **không** hash `read_file_content`. Không ghi đè được nội dung: bản mới = file mới |
 | **confluence** | ○ | ✓ | ✓ | connector Atlassian | trang Confluence có version riêng — ánh xạ sang `MANIFEST.version`, đừng dựng version thứ hai |
 | **notion** | ○ | ✓ | ✓ | connector Notion | block model, không phải file → `publish` phải quyết định chia block thế nào |
 | **tracker-doc** | ○ | ✗ | ✓ | adapter tracker có `document` | đẩy bản chốt thành document của tracker, để đối tác đọc cùng chỗ với issue |

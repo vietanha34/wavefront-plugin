@@ -159,7 +159,7 @@ Nên `publish` nhận **bản đã chốt đi ra**, không bao giờ là nơi ag
 | Adapter | Trạng thái |
 |---|---|
 | `local` | **đã có** |
-| `gdrive` | chưa viết — cần connector |
+| `gdrive` | **đã có** — `adapters/docs/gdrive.md`. Cần connector Google Drive first-party của claude.ai, nên chỉ chạy trong phiên của người. `update_file` không ghi nội dung → bản mới là file mới, bản cũ chuyển sang `99_Luu-tru/<ngày>/` |
 | `confluence` | chưa viết |
 
 ---
